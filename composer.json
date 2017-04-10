@@ -1,0 +1,13 @@
+{
+    "require": {
+        "defuse/php-encryption": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Decrypter\\": "src/"
+        }
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^2.8"
+    }
+}
