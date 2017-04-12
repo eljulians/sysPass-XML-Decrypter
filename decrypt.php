@@ -6,6 +6,29 @@ require 'vendor/autoload.php';
 define('DEST_FILE', 'decrypted_accounts.txt');
 
 use \Decrypter\Decrypter;
+use \Decrypter\Exporter;
+
+
+function main()
+{
+    exitIfNotCLI();
+    $args = getArguments();
+
+    $decrypter = new Decrypter(
+        $args['xmlFile'],
+        $args['exportKey'],
+        $args['masterKey']
+    );
+
+    echo "Starting decryption...\n";
+
+    $decryptedAccounts = $decrypter->decrypt();
+
+    Exporter::export($decryptedAccounts, 'lastpass', $args['destFile']);
+
+    echo "=============================\n\n";
+    echo "Decryption ended with " . count($decryptedAccounts) . " accounts.\n";
+}
 
 function exitIfNotCLI()
 {
@@ -30,6 +53,7 @@ function getArguments()
     $exportKey = $argv[2];
     $masterKey = $argv[3];
     $destFile = $argv[4];
+    $exportFormat = $argv[5] ?? '<default>';
 
     if (!file_exists($xmlFile)) {
         echo "The file '$xmlFile' does not exist or couldn't be read.\n";
@@ -44,33 +68,10 @@ function getArguments()
     ];
 }
 
-exitIfNotCLI();
-$args = getArguments();
-
-$decrypter = new Decrypter(
-    $args['xmlFile'],
-    $args['exportKey'],
-    $args['masterKey']
-);
-
-echo "Starting decryption...\n";
 try {
-    $decryptedAccounts = $decrypter->decrypt();
+    main();
 } catch (Exception $exception) {
-    echo 'An exception occurred during the decryption.';
-    print_r($exception);
+    echo "\nSome error happened:\n";
+    echo($exception->getMessage()) . "\n\n";
     exit(4);
 }
-
-foreach ($decryptedAccounts as $decryptedAccount) {
-    $account = $decryptedAccount['name'] .
-        ':' .
-        $decryptedAccount['login'] .
-        ':' .
-        $decryptedAccount['password'] .
-        "\n";
-    file_put_contents($args['destFile'], $account, FILE_APPEND);
-}
-
-echo "=============================\n\n";
-echo "Decryption ended with " . count($decryptedAccounts) . " accounts.\n";
