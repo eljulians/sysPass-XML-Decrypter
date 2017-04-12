@@ -22,4 +22,4 @@ XML decrypter for [sysPass](https://github.com/nuxsmin/sysPass/).
  - php-mcrypt
 
 
-Tested with PHP 7.0.15.
+Tested with PHP 7.0.15 and exported XML with sysPass 2.1.5.17041201.
