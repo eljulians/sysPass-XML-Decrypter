@@ -68,6 +68,10 @@ foreach ($decryptedAccounts as $decryptedAccount) {
         $decryptedAccount['login'] .
         ':' .
         $decryptedAccount['password'] .
+        ':' .
+        $decryptedAccount['category'] .
+        ':' .
+        $decryptedAccount['customer'] .
         "\n";
     file_put_contents($args['destFile'], $account, FILE_APPEND);
 }

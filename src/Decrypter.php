@@ -28,7 +28,13 @@ class Decrypter
 
         $decryptedNodesValidXML = $this->decryptedNodesToValidXML($decryptedNodes);
 
-        $decryptedAccounts = $this->decryptAccountPasswords($decryptedNodesValidXML);
+        list($categories, $customers) = $this->getCategoriesAndCustomers($decryptedNodesValidXML);
+
+        $decryptedAccounts = $this->decryptAccountPasswords(
+            $decryptedNodesValidXML,
+            $categories,
+            $customers
+        );
 
         return $decryptedAccounts;
     }
@@ -72,10 +78,40 @@ class Decrypter
 
         $decryptedNodesValidXML .= '</root>';
 
+        file_put_contents('decrypted.xml', $decryptedNodesValidXML);
+
         return $decryptedNodesValidXML;
     }
 
-    protected function decryptAccountPasswords($decryptedNodes)
+    protected function getCategoriesAndCustomers($decryptedNodes)
+    {
+        $xmlDoc = new DOMDocument();
+        $xmlDoc->loadXML($decryptedNodes, LIBXML_PARSEHUGE);
+        $xmlDoc->saveXML();
+
+        $nodeNames = ['Category', 'Customer'];
+        $categoriesAndCustomers = [];
+        $outerNodeIndex = 0;
+
+        foreach ($nodeNames as $nodeName) {
+            $nodes = $xmlDoc->getElementsByTagName($nodeName);
+
+            foreach ($nodes as $node) {
+                $id = $node->getAttribute('id');
+                $name = $node->getElementsByTagName('name')
+                    ->item(0)
+                    ->nodeValue;
+
+                $categoriesAndCustomers[$outerNodeIndex][$id] = $name;
+            }
+
+            $outerNodeIndex++;
+        }
+
+        return $categoriesAndCustomers;
+    }
+
+    protected function decryptAccountPasswords($decryptedNodes, $categories, $customers)
     {
         $xmlDoc = new DOMDocument();
         $xmlDoc->loadXML($decryptedNodes, LIBXML_PARSEHUGE);
@@ -98,6 +134,12 @@ class Decrypter
             $accountPassword = $accountNode->getElementsByTagName('pass')
                 ->item(0)
                 ->nodeValue;
+            $customerId = $accountNode->getElementsByTagName('customerId')
+                ->item(0)
+                ->nodeValue;
+            $categoryId = $accountNode->getElementsByTagName('categoryId')
+                ->item(0)
+                ->nodeValue;
 
             $unlockedKey = $this->unlockKey($accountKey, $this->masterKey);
 
@@ -111,7 +153,9 @@ class Decrypter
             $decryptedAccounts[] = [
                 'name' => $name,
                 'login' => $accountLogin,
-                'password' => $decryptedPassword
+                'password' => $decryptedPassword,
+                'category' => $categories[$categoryId],
+                'customer' => $customers[$customerId]
             ];
         }
 
