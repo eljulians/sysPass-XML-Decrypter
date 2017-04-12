@@ -71,7 +71,7 @@ function getArguments()
 try {
     main();
 } catch (Exception $exception) {
-    echo "\nSome error happened...\n\n";
-    print_r($exception);
+    echo "\nSome error happened:\n";
+    echo($exception->getMessage()) . "\n\n";
     exit(4);
 }
