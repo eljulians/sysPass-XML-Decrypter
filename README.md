@@ -12,7 +12,14 @@ XML decrypter for [sysPass](https://github.com/nuxsmin/sysPass/).
 
  - Execute the script:
  ```
- ./cli.php <path-to-encrypted-xml> <export-key>
+ ./cli.php <path-to-encrypted-xml> <export-key> <master-key> <dest-file>
  ```
+
+## Required packages
+
+ - php-xml
+ - php-mbstring
+ - php-mcrypt
+
 
 Tested with PHP 7.0.15.
