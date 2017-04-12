@@ -122,6 +122,9 @@ class Decrypter
         $decryptedAccounts = [];
 
         foreach ($accountNodes as $accountNode) {
+            $url = $accountNode->getElementsByTagName('url')
+                ->item(0)
+                ->nodeValue;
             $name = $accountNode->getElementsByTagName('name')
                 ->item(0)
                 ->nodeValue;
@@ -151,6 +154,7 @@ class Decrypter
             }
 
             $decryptedAccounts[] = [
+                'url' => $url,
                 'name' => $name,
                 'login' => $accountLogin,
                 'password' => $decryptedPassword,
