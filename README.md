@@ -6,15 +6,16 @@ XML decrypter for [sysPass](https://github.com/nuxsmin/sysPass/).
 ## Supported export formats
 
  - LastPass
- 
- The resulting file is comma-delimited and is also suitable for CSV generic import in KeePass.
+ - Comma-delimited CSV (default) - suitable for CSV generic import in KeePass
 
 ## Requirements
 
- - PHP >= 7.0
+ - PHP >= 7.0 
  - php-xml
  - php-mbstring
  - php-mcrypt
+ - composer
+ - git
  
 ## Installation
 
@@ -35,7 +36,13 @@ XML decrypter for [sysPass](https://github.com/nuxsmin/sysPass/).
 
  - Execute the script:
  ```
- ./decrypt.php <path-to-encrypted-xml> <xml-export-key> <master-syspass-key> <dest-file> [format]
+ ./decrypt.php <path-to-encrypted-xml> <xml-export-password> <syspass-master-password> <dest-file> [format]
  ```
+ 
+ * format: lastpass - if ommitted, the default is to export in CSV comma-delimited format
 
-Tested with PHP 7.0.15 and XML exported with sysPass 2.1.5.17041201.
+Tested with:
+
+* PHP 7.0.15 and sysPass 2.1.5.17041201
+* PHP 7.2.7 and sysPass  2.1 (2.1.15.17101701)
+
